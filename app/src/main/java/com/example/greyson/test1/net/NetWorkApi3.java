@@ -1,7 +1,6 @@
 package com.example.greyson.test1.net;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.cookie.CookieJarImpl;
@@ -64,13 +63,13 @@ public class NetWorkApi3 {
         if (mRetrofit3 == null) {
             OkHttpClient okHttpClient = gradleOkHttp(context);
             mRetrofit3 = new Retrofit.Builder()
-                    .baseUrl(ServerUrl.routeUrl)
+                    .baseUrl(ServerUrl.baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())////
                     .client(okHttpClient)
                     .build();
-            Log.v("####", String.valueOf(mRetrofit3));
         }
         return mRetrofit3;
     }
+
 }

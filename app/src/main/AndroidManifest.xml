@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
 
+
+
     <application
         android:name=".config.WSAppContext"
         android:allowBackup="true"
@@ -26,8 +28,7 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SplashActivity"
             android:screenOrientation="portrait">
@@ -52,6 +53,7 @@
             android:value="@integer/google_play_services_version" />
 
         <service android:name=".core.TimerService" />
+
 
     </application>
 

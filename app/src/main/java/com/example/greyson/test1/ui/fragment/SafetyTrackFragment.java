@@ -1,34 +1,29 @@
 package com.example.greyson.test1.ui.fragment;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.greyson.test1.R;
-import com.example.greyson.test1.entity.TrackerRes;
-import com.example.greyson.test1.net.WSNetService3;
 import com.example.greyson.test1.ui.activity.TrackerActivity;
 import com.example.greyson.test1.ui.base.BaseFragment;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
 import static android.content.Context.MODE_PRIVATE;
-import static android.view.View.VISIBLE;
+
 
 /**
  * Tis class is about tracker function
@@ -38,11 +33,18 @@ import static android.view.View.VISIBLE;
 public class SafetyTrackFragment extends BaseFragment{
 
     private Button okButton;
-    private EditText desInput;
     private EditText cusTime;
-    private Spinner timSelection;
-    private LinearLayout cusSetting;
-    private TextView box;
+    private EditText nameText;
+    private static final int REQUEST_GET_DEVICEID = 222;
+    private String id;
+    private String number;
+    private String laContact;
+    private String cLatitude;
+    private String cLngtitude;
+
+
+
+
 
     /**
      * This method is used to initialize the map view and request the current location
@@ -52,56 +54,48 @@ public class SafetyTrackFragment extends BaseFragment{
      * @return
      */
     @Override
-    protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frag_safetytrack, container, false);
+    protected View initView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.frag_safetytrack, container, false);
 
         okButton = (Button) view.findViewById(R.id.okButton);
-        desInput = (EditText) view.findViewById(R.id.desInput);
         cusTime = (EditText) view.findViewById(R.id.cusTime);
-        timSelection = (Spinner) view.findViewById(R.id.timSelection);
-        cusSetting = (LinearLayout) view.findViewById(R.id.cusSetting);
-        box = (TextView) view.findViewById(R.id.box);
-
-        // Tis is spinner listener
-        timSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] languages = getResources().getStringArray(R.array.time_selection);
-                if (languages[position].toString().equals("At the end")) {
-                    cusSetting.setVisibility(View.INVISIBLE);
-                }
-                if (languages[position].equals("customize")) {
-                    cusSetting.setVisibility(VISIBLE);
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        nameText = (EditText) view.findViewById(R.id.nameText);
 
         // This is ok button function
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getDuration();
-                String destination = desInput.getText().toString().trim();
-                String time = box.getText().toString();
-                //String time = "no time";
-                String notice = cusTime.getText().toString().trim();
-                if (destination.equals("")) {
-                    destination = "no destination";
-                    time = "no duration";
-                }
-                if (notice.equals("")) {
-                    Toast.makeText(mContext,"please fill out notice time",Toast.LENGTH_SHORT).show();
-                } else {
-                    passTravelSetting(destination, time, notice);
-                }
+               if (checkNotTime() && checkName()) {
+                   String notice = cusTime.getText().toString().trim();
+                   String name = nameText.getText().toString().trim();
+                   passTravelSetting(notice, name);
+               }
+
             }
         });
+
+        //checkNameDialog();
+        checkDeviceIDPermission();
         return view;
     }
 
+    @Override
+    protected void initData() {
+        getCurrentLocation();
+        getContactList();
+    }
+
+    @Override
+    protected void initEvent() {
+
+    }
+
+    @Override
+    protected void destroyView() {
+
+    }
+
+    /**
     protected void getDuration() {
         Map<String, String> params = new HashMap<>();
         //String ori = "";
@@ -141,40 +135,123 @@ public class SafetyTrackFragment extends BaseFragment{
                     }
                 });
     }
+    */
 
-    private String getCurrentLocation() {
+    private void getCurrentLocation() {
         SharedPreferences preferences1 = mContext.getSharedPreferences("LastLocation",MODE_PRIVATE);
-        String currentLocation = preferences1.getString("last location","0,0");
-        return currentLocation;
+        String[] array = preferences1.getString("last location","0,0").split(",");
+        cLatitude = array[0];
+        cLngtitude = array[1];
+    }
+
+    private void getContactList() {
+        SharedPreferences preferences = mContext.getSharedPreferences("LastContact", MODE_PRIVATE);
+        String lastContact = preferences.getString("contact", null);
+        if (lastContact == null) {
+            Toast.makeText(mContext, "Emergency Contact is Empty.", Toast.LENGTH_LONG).show();
+            return;
+        } else {
+            laContact = lastContact;
+        }
+    }
+
+    private boolean checkNotTime() {
+        String notice = cusTime.getText().toString().trim();
+        if (notice.equals("")) {
+            Toast.makeText(mContext,"please fill out notice time",Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (Integer.valueOf(notice) <= 5) {
+            Toast.makeText(mContext,"please make sure time is longer than 5 min",Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (Integer.valueOf(notice) >= 30) {
+            Toast.makeText(mContext, "please make sure time is shorter than 30 min", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean checkName() {
+        String name = nameText.getText().toString().trim();
+        if (name.equals("")) {
+            Toast.makeText(mContext, "Please input your name", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void checkDeviceIDPermission() {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_PHONE_STATE)) {
+
+            } else {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_GET_DEVICEID);
+            }
+        } else {
+            getMobileIMEI();
+        }
+    }
+
+    private void checkNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        builder.setTitle("Tips");
+        builder.setView(inflater.inflate(R.layout.frag_inputname, null));
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Later", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     /**
-     * This method is to send setting of tracker
-     * @param a
-     * @param b
-     * @param c
+     * request permission
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
      */
-    private void passTravelSetting(String a, String b, String c) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_GET_DEVICEID:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getMobileIMEI();}
+            }break;
+        }
+    }
+
+    private void getMobileIMEI() {
+        TelephonyManager tManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+         id = tManager.getDeviceId() ;
+        number = tManager.getLine1Number();
+    }
+
+    /**
+     *
+     * @param tim
+     */
+    private void passTravelSetting(String tim, String name) {
         Intent intent = new Intent();
         intent.setClass(mContext, TrackerActivity.class);
-        intent.putExtra("Des", a);
-        intent.putExtra("Tim", b);
-        intent.putExtra("Not", c);
+        intent.putExtra("id", id);
+        intent.putExtra("num", number);
+        intent.putExtra("not", tim);
+        intent.putExtra("con", laContact);
+        intent.putExtra("lat", cLatitude);
+        intent.putExtra("lng", cLngtitude);
+        intent.putExtra("nam", name);
         startActivityForResult(intent,1);
-    }
-
-    @Override
-    protected void initData() {
-
-    }
-
-    @Override
-    protected void initEvent() {
-
-    }
-
-    @Override
-    protected void destroyView() {
-
     }
 }

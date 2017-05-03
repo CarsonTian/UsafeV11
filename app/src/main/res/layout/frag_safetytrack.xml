@@ -1,145 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/frag_safetytrack"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:weightSum="1">
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_height="443dp"
+        android:gravity="top|center"
         android:orientation="vertical"
         android:weightSum="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:gravity="left|center"
+            android:layout_height="133dp"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:weightSum="1">
 
-            <TextView
-                android:id="@+id/textView"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="71dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible"
+                android:layout_weight="0.69"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="298dp"
+                    android:layout_height="wrap_content"
+                    android:text="Please input your name for emergence message"
+                    android:textAlignment="viewStart"
+                    android:textSize="24sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please Input Destination"
-                android:textAlignment="viewStart"
-                android:textSize="20sp" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <EditText
+                    android:id="@+id/nameText"
+                    android:layout_width="83dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.69"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left|center"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/desInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textCapCharacters|textPersonName"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:gravity="left|center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.00"
-                android:text="Please Select a period"
-                android:textSize="20sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left|center"
-            android:orientation="vertical">
-
-            <Spinner
-                android:id="@+id/timSelection"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:entries="@array/time_selection" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/cusSetting"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:gravity="left|center"
-            android:orientation="horizontal"
-            android:visibility="invisible"
+            android:layout_weight="0.37"
+            android:orientation="vertical"
             android:weightSum="1">
 
             <LinearLayout
-                android:layout_width="115dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:gravity="left|center"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:layout_weight="0.37">
+
+                <LinearLayout
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
 
                 <TextView
                     android:id="@+id/durTitle"
-                    android:layout_width="104dp"
+                    android:layout_width="315dp"
                     android:layout_height="wrap_content"
-                    android:text="Your time"
-                    android:textAlignment="viewStart"
-                    android:textSize="20sp" />
+                    android:text="Please input a time as period of reminding"
+                    android:textAlignment="textStart"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="24dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/cusTime"
-                android:layout_width="54dp"
-                android:layout_height="53dp"
-                android:ems="10"
-                android:inputType="number"
-                android:text=" " />
-
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.16"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:layout_weight="0.33">
+
+                <EditText
+                    android:id="@+id/cusTime"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.05"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:text=" "
+                    android:textSize="24sp" />
 
                 <TextView
-                    android:layout_width="55dp"
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="min"
                     android:textAlignment="viewStart"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
             </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="216dp"
-        android:gravity="bottom"
+        android:layout_height="123dp"
+        android:gravity="center"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/okButton"
-            android:layout_width="match_parent"
+            android:layout_width="117dp"
             android:layout_height="wrap_content"
             android:text="OK" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
 
 </LinearLayout>

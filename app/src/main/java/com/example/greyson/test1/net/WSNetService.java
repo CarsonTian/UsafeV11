@@ -2,7 +2,6 @@ package com.example.greyson.test1.net;
 
 import com.example.greyson.test1.entity.RouteRes;
 import com.example.greyson.test1.entity.SafePlaceRes;
-import com.example.greyson.test1.entity.TrackerRes;
 
 import java.util.Map;
 
@@ -28,7 +27,4 @@ public interface WSNetService {
 
     @GET("json?")
     Observable<RouteRes> getSafePlaceRoute(@Url String url, @QueryMap Map<String, String> params);
-
-    @GET("json?")
-    Observable<TrackerRes> getDuration(@Url String url, @QueryMap Map<String, String> params);
 }
